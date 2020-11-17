@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from scrapy.crawler import CrawlerProcess
 from src.scrapper import NflStatsScraper
-from src.utils import build_dataframe
+from src.utils import build_dataframe, scorer
 
 
 def main():
@@ -15,7 +15,7 @@ def main():
     process.start()
 
     # Parse datasets from the webscraper
-    for types in NflStatsScraper.nfl_columns_dict.keys():
+    for types in sorted(NflStatsScraper.nfl_columns_dict.keys()):
         player_values = pd.merge(left=player_values,
                                  right=build_dataframe(stats=NflStatsScraper.nfl_stats_dict[types],
                                                        names=NflStatsScraper.nfl_players_dict[types],
@@ -24,6 +24,13 @@ def main():
                                  left_index=True,
                                  right_index=True,
                                  how="left")
+
+    # Reduce dataset down to the necessary columns
+    player_values = player_values[['Position', 'Value', 'Rush Yds', 'TDRushing', 'Rush FUM', 'Rush 1st', 'Pass Yds', 'TD',
+                                   'INT', 'Rec', 'Yds', 'TDReceiving', "Rec 1st"]]
+
+    # Score dataset
+    player_values = scorer(player_values)
 
     player_values.to_csv("dataset.csv")
 
