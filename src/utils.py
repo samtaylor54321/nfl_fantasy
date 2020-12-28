@@ -58,7 +58,7 @@ def scorer(df):
             df["reception_pts"] + df["recieving_yards_pts"] + df["recieving_td_pts"] + df["recieving_first_down_pts"]
 
         # Generate cost per point
-        df["cost_per_point"] = df["overall_pts"] / df["Value"].astype(int)
+        df["roi"] = df["overall_pts"] / df["Value"].astype(int)
         return df
     except KeyError:
         # Raise error if all fields are present

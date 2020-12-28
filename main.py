@@ -26,8 +26,8 @@ def main():
                                  how="left")
 
     # Reduce dataset down to the necessary columns
-    player_values = player_values[['Position', 'Value', 'Rush Yds', 'TDRushing', 'Rush FUM', 'Rush 1st', 'Pass Yds', 'TD',
-                                   'INT', 'Rec', 'Yds', 'TDReceiving', "Rec 1st"]]
+    player_values = player_values[['Position', 'Value', 'Team', 'Rush Yds', 'TDRushing', 'Rush FUM', 'Rush 1st',
+                                   'Pass Yds', 'TD', 'INT', 'Rec', 'Yds', 'TDReceiving', "Rec 1st"]]
 
     # Score dataset
     player_values = scorer(player_values)
