@@ -12,12 +12,20 @@ def build_dataframe(stats, names, columns):
         pd.DataFrame: Scrapped data for a given statistic.
     """
     # Strip the strings of each field where the values are populated and ignore blank spaces
-    player_stats = [data.strip() for data in stats if data.strip() != '']
-    player_names = [data.strip() for data in names if data.strip() != '']
-    player_columns = [data.strip() for data in columns if data.strip() != '']
+    player_stats = [data.strip() for data in stats if data.strip() != ""]
+    player_names = [data.strip() for data in names if data.strip() != ""]
+    player_columns = [data.strip() for data in columns if data.strip() != ""]
     # Build a DataFrame from the result
-    dataset = pd.DataFrame(np.asarray(player_stats).reshape((int(len(np.asarray(player_stats)) / len(player_columns)),
-                           len(player_columns))), index=np.asarray(player_names), columns=np.asarray(player_columns))
+    dataset = pd.DataFrame(
+        np.asarray(player_stats).reshape(
+            (
+                int(len(np.asarray(player_stats)) / len(player_columns)),
+                len(player_columns),
+            )
+        ),
+        index=np.asarray(player_names),
+        columns=np.asarray(player_columns),
+    )
 
     return dataset
 
@@ -53,12 +61,23 @@ def scorer(df):
         df["recieving_first_down_pts"] = df["Rec 1st"].astype(int) * 0.5
 
         # Generate overall score
-        df["overall_pts"] = df["rushing_yard_pts"] + df["rushing_td_pts"] + df["rushing_first_down_pts"] -\
-            df["rushing_fumbles_pts"] + df["passing_yard_pts"] + df["passing_td_pts"] - df["passing_int_pts"] +\
-            df["reception_pts"] + df["recieving_yards_pts"] + df["recieving_td_pts"] + df["recieving_first_down_pts"]
+        df["overall_pts"] = (
+            df["rushing_yard_pts"]
+            + df["rushing_td_pts"]
+            + df["rushing_first_down_pts"]
+            - df["rushing_fumbles_pts"]
+            + df["passing_yard_pts"]
+            + df["passing_td_pts"]
+            - df["passing_int_pts"]
+            + df["reception_pts"]
+            + df["recieving_yards_pts"]
+            + df["recieving_td_pts"]
+            + df["recieving_first_down_pts"]
+        )
 
         # Generate cost per point
-        df["roi"] = df["overall_pts"] / df["Value"].astype(int)
+        df["roi"] = df["overall_pts"] / df["Price"].astype(int)
+
         return df
     except KeyError:
         # Raise error if all fields are present

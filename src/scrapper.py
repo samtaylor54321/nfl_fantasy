@@ -2,8 +2,8 @@ import scrapy
 
 
 class NflStatsScraper(scrapy.Spider):
-    """Scrapes data for the current season from NFL.com
-    """
+    """Scrapes data for the current season from NFL.com"""
+
     name = "nfl_data_spider"
     nfl_players_dict = {}
     nfl_stats_dict = {}
@@ -15,12 +15,14 @@ class NflStatsScraper(scrapy.Spider):
             Loops through the passing, rushing, receiving and kicing data for the current season
         Yields:
             str: Initial URL to start web scraping from.
-         """
+        """
         # Define URLs
-        urls = ["https://www.nfl.com/stats/player-stats/category/passing/2020/REG/all/passingyards/desc",
-                "https://www.nfl.com/stats/player-stats/category/rushing/2020/REG/all/rushingyards/desc",
-                "https://www.nfl.com/stats/player-stats/category/receiving/2020/REG/all/receivingreceptions/desc",
-                "https://www.nfl.com/stats/player-stats/category/field-goals/2020/REG/all/kickingfgmade/desc"]
+        urls = [
+            "https://www.nfl.com/stats/player-stats/category/passing/2022/REG/all/passingyards/desc",
+            "https://www.nfl.com/stats/player-stats/category/rushing/2022/REG/all/rushingyards/desc",
+            "https://www.nfl.com/stats/player-stats/category/receiving/2022/REG/all/receivingreceptions/desc",
+            "https://www.nfl.com/stats/player-stats/category/field-goals/2022/REG/all/kickingfgmade/desc",
+        ]
         # Yield URL to scrapy request.
         for url in urls:
             yield scrapy.Request(url=url, callback=self._parse_stats)
@@ -35,21 +37,35 @@ class NflStatsScraper(scrapy.Spider):
             Process will continue as long as there is a 'next page' link on the URL
         """
         # Get the data type we're dealing with
-        type = response.xpath('//li[@class="d3-o-tabs__list-item d3-is-active"]/a/text()').extract()[0]
+        type = response.xpath(
+            '//li[@class="d3-o-tabs__list-item d3-is-active"]/a/text()'
+        ).extract()[0]
 
         # Check if the type exists and populates on the first pass but appends after.
         if type not in NflStatsScraper.nfl_players_dict.keys():
-            NflStatsScraper.nfl_players_dict[type] = response.xpath('//a[@class="d3-o-player-fullname nfl-o-cta--link"]/text()').extract()
+            NflStatsScraper.nfl_players_dict[type] = response.xpath(
+                '//a[@class="d3-o-player-fullname nfl-o-cta--link"]/text()'
+            ).extract()
         else:
-            NflStatsScraper.nfl_players_dict[type].extend(response.xpath('//a[@class="d3-o-player-fullname nfl-o-cta--link"]/text()').extract())
+            NflStatsScraper.nfl_players_dict[type].extend(
+                response.xpath(
+                    '//a[@class="d3-o-player-fullname nfl-o-cta--link"]/text()'
+                ).extract()
+            )
         # Check if the type exists and populates on the first pass but appends after.
         if type not in NflStatsScraper.nfl_stats_dict.keys():
-            NflStatsScraper.nfl_stats_dict[type] = response.xpath('//tr/td/text()').extract()
+            NflStatsScraper.nfl_stats_dict[type] = response.xpath(
+                "//tr/td/text()"
+            ).extract()
         else:
-            NflStatsScraper.nfl_stats_dict[type].extend(response.xpath('//tr/td/text()').extract())
+            NflStatsScraper.nfl_stats_dict[type].extend(
+                response.xpath("//tr/td/text()").extract()
+            )
         # Check if the type exists and populates on the first pass but appends after.
         if type not in NflStatsScraper.nfl_columns_dict.keys():
-            NflStatsScraper.nfl_columns_dict[type] = response.xpath('//th/a/text()').extract()
+            NflStatsScraper.nfl_columns_dict[type] = response.xpath(
+                "//th/a/text()"
+            ).extract()
 
         # Check if there's a "next page" link
         links_to_follow = response.xpath('//link[@rel="prerender"]/@href').extract()
