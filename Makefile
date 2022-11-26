@@ -9,12 +9,12 @@ lint:
 	python3 -m pylint --disable=R,C *.py src/*.py
 
 test:
-	python3 -m pytest -vv --cov=src --cov=main test_*.py
+	python3 -m pytest -vv --cov=src --cov=main
 
 build:
 	docker build -t nfl-fantasy-dashboard .
 
 run:
-	docker run -p 127.0.0.1:8080:8080 nfl-fantasy-dashboard
+	docker run -p 127.0.0.1:8050:8050 nfl-fantasy-dashboard
 
-all: install lint test build
+all: install format lint test build
