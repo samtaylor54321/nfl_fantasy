@@ -131,7 +131,6 @@ dmypy.json
 .pyre/
 
 # Any datasets
-*.csv
 *.xlsx
 *.numbers
 
