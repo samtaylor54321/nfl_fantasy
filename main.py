@@ -21,8 +21,21 @@ scraper = NFLDataScrapper()
 # Scrape player data
 all_players = scraper.generate_nfl_dataset()
 
-# all_players = pd.read_csv("./notebooks/stats-database.csv")
-player_params = pd.read_csv("./data/player-params.csv", index_col=["Name"])
+players_long = (
+    all_players.iloc[:, 0:14]
+    .melt(id_vars=["Name", "Position"])
+    .sort_values(["Name", "variable"])
+)
+
+players_long["shifted"] = players_long.groupby(["Name", "Position"])["value"].shift(1)
+
+players_long = players_long.fillna(0)
+
+players_long["weekly_points"] = players_long["value"].astype(float) - players_long[
+    "shifted"
+].astype(float)
+
+player_params = players_long.groupby(["Name"])["weekly_points"].agg([np.mean, np.std])
 
 fig1 = px.scatter(
     all_players,
