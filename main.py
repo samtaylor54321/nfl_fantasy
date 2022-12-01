@@ -38,8 +38,8 @@ player_params = players_long.groupby(["Name"])["weekly_points"].agg([np.mean, np
 
 fig1 = px.scatter(
     all_players,
-    x="total_pts",
-    y="Price",
+    x="Price",
+    y="AvgPoints",
     color="Position",
     facet_col="Free Agent",
     size="Years Remaining",
@@ -48,17 +48,16 @@ fig1 = px.scatter(
     hover_data=["Team", "Years Remaining"],
     labels={"4": "Total Points Score", "Price": "Price"},
 )
-
-
 fig1.update_traces(
     marker=dict(line=dict(width=2, color="DarkSlateGrey")),
     selector=dict(mode="markers"),
 )
+fig1.update_xaxes(matches=None)
 
 fig2 = px.scatter(
     all_players,
-    x="Trade Value",
-    y="Price",
+    x="Price",
+    y="Trade Value",
     color="Position",
     facet_col="Free Agent",
     size="Years Remaining",
@@ -67,12 +66,38 @@ fig2 = px.scatter(
     hover_data=["Team", "Years Remaining"],
     labels={"4": "Total Points Score", "Price": "Price"},
 )
+
+# fig2.add_hline(all_players["Trade Value"].mean())
+# fig2.add_vline(all_players["Price"].mean())
 
 
 fig2.update_traces(
     marker=dict(line=dict(width=2, color="DarkSlateGrey")),
     selector=dict(mode="markers"),
 )
+
+fig2.update_xaxes(matches=None)
+
+fig3 = px.scatter(
+    all_players,
+    x="AvgPoints",
+    y="Trade Value",
+    color="Position",
+    facet_col="Free Agent",
+    size="Years Remaining",
+    trendline="ols",
+    hover_name="Name",
+    hover_data=["Team", "Years Remaining"],
+    labels={"4": "Total Points Score", "Price": "Price"},
+)
+
+
+fig3.update_traces(
+    marker=dict(line=dict(width=2, color="DarkSlateGrey")),
+    selector=dict(mode="markers"),
+)
+
+fig3.update_xaxes(matches=None)
 
 app.layout = html.Div(
     [
@@ -96,7 +121,9 @@ app.layout = html.Div(
 )
 def render_content(tab):
     if tab == "tab-1-example-graph":
-        return html.Div([dcc.Graph(figure=fig1), dcc.Graph(figure=fig2)])
+        return html.Div(
+            [dcc.Graph(figure=fig1), dcc.Graph(figure=fig2), dcc.Graph(figure=fig3)]
+        )
     elif tab == "tab-2-example-graph":
         return html.Div(
             [

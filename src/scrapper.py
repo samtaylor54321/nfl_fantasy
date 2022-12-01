@@ -26,7 +26,6 @@ class NFLDataScrapper:
         player_database = self.combine_weekly_performance_with_players(
             players, weekly_results
         )
-
         # Read owner database into memory
         owner_database = pd.read_csv("./data/nfl-dynasty-rosters.csv")
 
@@ -37,6 +36,11 @@ class NFLDataScrapper:
             left_on="Name",
             right_on="Player",
         )
+
+        # Add the latest score
+        merged_players_with_owners["total_pts"] = merged_players_with_owners[
+            self.latest_gameweek
+        ]
 
         # Preprocess the data
         merged_players_with_owners = self.clean_data(merged_players_with_owners)
@@ -86,7 +90,7 @@ class NFLDataScrapper:
         ]
 
         # Grab the latest gameweek as an attribute
-        self.latest_gameweek = int(max(self.weeks)) - 1
+        self.latest_gameweek = max([int(x) for x in self.weeks]) - 1
 
     def scrape_weekly_results(self) -> tuple:
         """Scrape weekly player data
@@ -186,8 +190,6 @@ class NFLDataScrapper:
         Returns:
             pd.DataFrame: pd.DataFrame with additional metadata added
         """
-        # Add the latest score
-        data["total_pts"] = data[self.latest_gameweek]
         # Add roster status
         data["Team"] = data["Team"].fillna("Free Agent")
         # Clarify free agent status
@@ -204,7 +206,7 @@ class NFLDataScrapper:
             pd.DataFrame: Data with additional fields relating to PAR added.
         """
         avg_points_by_position = pd.DataFrame(
-            data.groupby(["Position"])[int(max(self.weeks)) - 1].mean()
+            data.groupby(["Position"])["total_pts"].mean()
         )
 
         avg_points_by_position.columns = ["AvgPointsByPosition"]
@@ -213,11 +215,9 @@ class NFLDataScrapper:
             avg_points_by_position, how="left", left_on="Position", right_index=True
         )
 
-        data["PointsAboveReplacement"] = (
-            data[self.latest_gameweek] - data["AvgPointsByPosition"]
-        )
+        data["PointsAboveReplacement"] = data["total_pts"] - data["AvgPointsByPosition"]
 
-        data["AvgPoints"] = data[self.latest_gameweek] / self.latest_gameweek
+        data["AvgPoints"] = data["total_pts"] / self.latest_gameweek
 
         return data
 
