@@ -48,6 +48,8 @@ fig1 = px.scatter(
     hover_data=["Team", "Years Remaining"],
     labels={"4": "Total Points Score", "Price": "Price"},
 )
+fig1.add_hline(y=all_players["AvgPoints"].mean(), line_dash="dot")
+fig1.add_vline(x=all_players["Price"].mean(), line_dash="dot")
 fig1.update_traces(
     marker=dict(line=dict(width=2, color="DarkSlateGrey")),
     selector=dict(mode="markers"),
@@ -66,16 +68,12 @@ fig2 = px.scatter(
     hover_data=["Team", "Years Remaining"],
     labels={"4": "Total Points Score", "Price": "Price"},
 )
-
-# fig2.add_hline(all_players["Trade Value"].mean())
-# fig2.add_vline(all_players["Price"].mean())
-
-
+fig2.add_hline(y=all_players["Trade Value"].mean(), line_dash="dot")
+fig2.add_vline(x=all_players["Price"].mean(), line_dash="dot")
 fig2.update_traces(
     marker=dict(line=dict(width=2, color="DarkSlateGrey")),
     selector=dict(mode="markers"),
 )
-
 fig2.update_xaxes(matches=None)
 
 fig3 = px.scatter(
@@ -90,13 +88,12 @@ fig3 = px.scatter(
     hover_data=["Team", "Years Remaining"],
     labels={"4": "Total Points Score", "Price": "Price"},
 )
-
-
+fig3.add_hline(y=all_players["Trade Value"].mean(), line_dash="dot")
+fig3.add_vline(x=all_players["AvgPoints"].mean(), line_dash="dot")
 fig3.update_traces(
     marker=dict(line=dict(width=2, color="DarkSlateGrey")),
     selector=dict(mode="markers"),
 )
-
 fig3.update_xaxes(matches=None)
 
 app.layout = html.Div(
