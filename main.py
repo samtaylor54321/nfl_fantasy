@@ -1,4 +1,6 @@
+import dash_auth
 import numpy as np
+import os
 import plotly.express as px
 import plotly.graph_objects as go
 
@@ -8,11 +10,16 @@ from dash.dependencies import Input, Output
 
 external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 
+# Set environment variables
+VALID_USERNAME_PASSWORD_PAIRS = {os.getenv("API_USER"): os.environ.get("API_PASSWORD")}
+
 app = Dash(
     __name__,
     external_stylesheets=external_stylesheets,
     suppress_callback_exceptions=True,
 )
+
+auth = dash_auth.BasicAuth(app, VALID_USERNAME_PASSWORD_PAIRS)
 
 # Instantiate scrapper
 scraper = NFLDataScrapper()
