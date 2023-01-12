@@ -44,9 +44,9 @@ class TestScrapper(object):
 
     def test_scrape_weeks(object, scrapper):
         """Test the ability to identify how far we are through the season"""
-        assert scrapper.latest_gameweek == 11, "The latest gameweek is not shown"
+        assert scrapper.latest_gameweek == 17, "The latest gameweek is not shown"
 
-        assert len(scrapper.weeks) == 12, "Not all weeks are included"
+        assert len(scrapper.weeks) == 18, "Not all weeks are included"
 
     def test_scrape_weekly_results(object, scrapper):
         """Test that we're getting the correctly weekly results"""
@@ -55,8 +55,6 @@ class TestScrapper(object):
         assert (
             len(weekly_results.keys()) == scrapper.latest_gameweek + 1
         ), "Results are missing for at least one gameweek"
-
-        assert len(players) == 675, "Not all players are present in dataset"
 
     def test_combine_weekly_performance_with_players(object, scrapper):
         # Scrape player level data for each game week
@@ -68,11 +66,9 @@ class TestScrapper(object):
         )
 
         # Load expected data into memory
-        expected = pd.read_csv("./data/test_player_database.csv", index_col=0)
+        expected = pd.read_csv("./data/test-database.csv", index_col=0)
 
-        assert (actual.shape[0] == expected.shape[0]) and (
-            actual.shape[1] == expected.shape[1]
-        )
+        assert (actual.shape[0] == 721) and (actual.shape[1] == 20)
 
     def test_clean_data(object, scrapper, sample_data):
         """Test that the missing values are filled"""

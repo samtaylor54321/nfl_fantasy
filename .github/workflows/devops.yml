@@ -11,16 +11,20 @@ jobs:
           python-version: 3.9
       - name: Install dependencies
         run: |
-          make install
+          	pip install --upgrade pip &&\
+		          pip install -r requirements.txt
       - name: Format code
         run: |
-          make format
+          python3 -m black *.py src/*.py
       - name: Lint with pylint
         run: |
-          make lint
+          python3 -m pylint --disable=R,C *.py src/*.py
       - name: Test with pytest
         run: |
-          make test
+          python3 -m pytest -vv --cov=src --cov=main
+      - uses: hadolint/hadolint-action@v2.1.0
+        with:
+          dockerfile: Dockerfile
       - name: Build Container
         run: |
-          make build
+          docker build -t nfl-fantasy-dashboard .

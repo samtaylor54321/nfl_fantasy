@@ -52,7 +52,7 @@ class NFLDataScrapper:
         merged_players_with_owners = self.add_price_data(merged_players_with_owners)
 
         # Load trade value data
-        trade_values = pd.read_csv("./data/trade-value-nov-22.csv")
+        trade_values = pd.read_csv("./data/trade-value-jan-23.csv")
 
         # Combine stats player database with trade values for players
         merged_players_with_owners = pd.merge(
