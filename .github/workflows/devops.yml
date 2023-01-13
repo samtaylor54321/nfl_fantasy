@@ -21,7 +21,8 @@ jobs:
       - name: Test with pytest
         run: |
           python3 -m pytest -vv --cov=src --cov=main
-      - uses: hadolint/hadolint-action@v2.1.0
+      - name: Lint with hadolint
+        uses: hadolint/hadolint-action@v2.1.0
         with:
           dockerfile: Dockerfile
       - name: Build Container
