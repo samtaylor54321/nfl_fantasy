@@ -15,3 +15,4 @@ pytest==7.1.1
 pytest-cov==3.0.0
 pylint==2.13.5
 dash-auth==1.4.1
+certifi>=2022.12.7 # not directly required, pinned by Snyk to avoid a vulnerability
