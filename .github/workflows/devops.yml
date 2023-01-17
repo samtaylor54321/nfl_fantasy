@@ -32,6 +32,8 @@ jobs:
         uses: snyk/actions/python-3.9@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --fail-on=all
 
       - name: Lint with hadolint
         uses: hadolint/hadolint-action@v2.1.0
