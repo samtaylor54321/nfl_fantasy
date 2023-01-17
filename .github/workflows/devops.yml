@@ -28,7 +28,7 @@ jobs:
         run: |
           python3 -m pytest -vv --cov=src --cov=main
 
-      - name: Run Snyk to check for vulnerabilities
+      - name: Run Snyk to check for vulnerabilities in dependancies
         uses: snyk/actions/python-3.9@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
