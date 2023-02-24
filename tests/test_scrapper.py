@@ -68,7 +68,7 @@ class TestScrapper(object):
         # Load expected data into memory
         expected = pd.read_csv("./data/test-database.csv", index_col=0)
 
-        assert (actual.shape[0] == 721) and (actual.shape[1] == 20)
+        assert (actual.shape[0] == 720) and (actual.shape[1] == 20)
 
     def test_clean_data(object, scrapper, sample_data):
         """Test that the missing values are filled"""
