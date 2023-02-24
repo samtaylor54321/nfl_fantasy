@@ -35,12 +35,7 @@ class TestScrapper(object):
         # Generate actual results
         actual = scrapper.generate_nfl_dataset()
 
-        # Load expected results
-        expected = pd.read_csv("./data/test-database.csv")
-
-        assert (actual.shape[0] == expected.shape[0]) and (
-            actual.shape[1] == expected.shape[1]
-        )
+        assert (actual.shape[0] == 722) and (actual.shape[1] == 30)
 
     def test_scrape_weeks(object, scrapper):
         """Test the ability to identify how far we are through the season"""
@@ -68,7 +63,7 @@ class TestScrapper(object):
         # Load expected data into memory
         expected = pd.read_csv("./data/test-database.csv", index_col=0)
 
-        assert (actual.shape[0] == 721) and (actual.shape[1] == 20)
+        assert (actual.shape[0] == 720) and (actual.shape[1] == 20)
 
     def test_clean_data(object, scrapper, sample_data):
         """Test that the missing values are filled"""

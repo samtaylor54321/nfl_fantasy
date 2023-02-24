@@ -1,7 +1,7 @@
 import pandas as pd
 import re
+import numpy as np
 import requests
-
 from bs4 import BeautifulSoup
 from sklearn.linear_model import LinearRegression
 
@@ -111,21 +111,30 @@ class NFLDataScrapper:
             )
             soup = BeautifulSoup(html.content, "html.parser")
 
-            # Find all table data
-            table_rows = soup.find_all("tr")
+            tbody = soup.find_all("tbody")
 
-            results = []
-
-            for i, row in enumerate(table_rows):
-                if i == 0:
-                    continue
-                else:
-                    results.append([row.text for row in row.find_all("td")])
+            data = [info.text for info in tbody[0].find_all("td")]
 
             weekly_result = pd.DataFrame(
-                results,
+                np.array(data).reshape(int(len(data) / 7), 7),
                 columns=["Rank", "Name", "Team", "Position", "Score", "Games", "Avg"],
             )
+
+            # Find all table data
+            # table_rows = soup.find_all("tr")
+
+            # results = []
+
+            # for i, row in enumerate(table_rows):
+            #    if i == 0:
+            #        continue
+            #    else:
+            #        results.append([row.text for row in row.find_all("td")])
+
+            # weekly_result = pd.DataFrame(
+            #    results,
+            #    columns=["Rank", "Name", "Team", "Position", "Score", "Games", "Avg"],
+            # )
 
             weekly_result["Score"] = weekly_result["Score"].astype(float)
 
