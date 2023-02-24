@@ -35,12 +35,7 @@ class TestScrapper(object):
         # Generate actual results
         actual = scrapper.generate_nfl_dataset()
 
-        # Load expected results
-        expected = pd.read_csv("./data/test-database.csv")
-
-        assert (actual.shape[0] == expected.shape[0]) and (
-            actual.shape[1] == expected.shape[1]
-        )
+        assert (actual.shape[0] == 722) and (actual.shape[1] == 30)
 
     def test_scrape_weeks(object, scrapper):
         """Test the ability to identify how far we are through the season"""
