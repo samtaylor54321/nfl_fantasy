@@ -11,7 +11,7 @@ from dash.dependencies import Input, Output
 external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 
 # Set environment variables
-VALID_USERNAME_PASSWORD_PAIRS = {os.getenv("API_USER"): os.environ.get("API_PASSWORD")}
+# VALID_USERNAME_PASSWORD_PAIRS = {os.getenv("API_USER"): os.environ.get("API_PASSWORD")}
 
 app = Dash(
     __name__,
@@ -19,7 +19,7 @@ app = Dash(
     suppress_callback_exceptions=True,
 )
 
-auth = dash_auth.BasicAuth(app, VALID_USERNAME_PASSWORD_PAIRS)
+# auth = dash_auth.BasicAuth(app, VALID_USERNAME_PASSWORD_PAIRS)
 
 # Instantiate scrapper
 scraper = NFLDataScrapper()
@@ -27,35 +27,27 @@ scraper = NFLDataScrapper()
 # Scrape player data
 all_players = scraper.generate_nfl_dataset()
 
-players_long = (
-    all_players.iloc[:, 0:14]
-    .melt(id_vars=["Name", "Position"])
-    .sort_values(["Name", "variable"])
-)
+players_long = all_players.iloc[:, 0:21].melt(id_vars=["Player", "Position", "Team"])
 
-players_long["shifted"] = players_long.groupby(["Name", "Position"])["value"].shift(1)
+players_long["variable"] = players_long["variable"].astype(int)
 
-players_long = players_long.fillna(0)
+players_long.sort_values(["Player", "variable"], inplace=True)
 
-players_long["weekly_points"] = players_long["value"].astype(float) - players_long[
-    "shifted"
-].astype(float)
-
-player_params = players_long.groupby(["Name"])["weekly_points"].agg([np.mean, np.std])
+player_params = players_long.groupby(["Player"])["value"].agg([np.mean, np.std])
 
 fig1 = px.scatter(
     all_players,
     x="Price",
-    y="AvgPoints",
+    y="Avg",
     color="Position",
     facet_col="Free Agent",
     size="Years Remaining",
     trendline="ols",
-    hover_name="Name",
-    hover_data=["Team", "Years Remaining"],
+    hover_name="Player",
+    hover_data=["Squad", "Years Remaining"],
     labels={"4": "Total Points Score", "Price": "Price"},
 )
-fig1.add_hline(y=all_players["AvgPoints"].mean(), line_dash="dot")
+fig1.add_hline(y=all_players["Avg"].mean(), line_dash="dot")
 fig1.add_vline(x=all_players["Price"].mean(), line_dash="dot")
 fig1.update_traces(
     marker=dict(line=dict(width=2, color="DarkSlateGrey")),
@@ -71,8 +63,8 @@ fig2 = px.scatter(
     facet_col="Free Agent",
     size="Years Remaining",
     trendline="ols",
-    hover_name="Name",
-    hover_data=["Team", "Years Remaining"],
+    hover_name="Player",
+    hover_data=["Squad", "Years Remaining"],
     labels={"4": "Total Points Score", "Price": "Price"},
 )
 fig2.add_hline(y=all_players["Trade Value"].mean(), line_dash="dot")
@@ -85,18 +77,18 @@ fig2.update_xaxes(matches=None)
 
 fig3 = px.scatter(
     all_players,
-    x="AvgPoints",
+    x="Avg",
     y="Trade Value",
     color="Position",
     facet_col="Free Agent",
     size="Years Remaining",
     trendline="ols",
-    hover_name="Name",
-    hover_data=["Team", "Years Remaining"],
+    hover_name="Player",
+    hover_data=["Squad", "Years Remaining"],
     labels={"4": "Total Points Score", "Price": "Price"},
 )
 fig3.add_hline(y=all_players["Trade Value"].mean(), line_dash="dot")
-fig3.add_vline(x=all_players["AvgPoints"].mean(), line_dash="dot")
+fig3.add_vline(x=all_players["Avg"].mean(), line_dash="dot")
 fig3.update_traces(
     marker=dict(line=dict(width=2, color="DarkSlateGrey")),
     selector=dict(mode="markers"),
@@ -148,9 +140,9 @@ def render_content(tab):
                             options=[
                                 {"label": player, "value": player}
                                 for player in all_players[
-                                    (all_players["Team"] == "Tottenham Royals")
+                                    (all_players["Squad"] == "Tottenham Royals")
                                     & (all_players["Position"] == "QB")
-                                ]["Name"]
+                                ]["Player"]
                             ],
                         ),
                         html.H5("RB"),
@@ -159,9 +151,9 @@ def render_content(tab):
                             options=[
                                 {"label": player, "value": player}
                                 for player in all_players[
-                                    (all_players["Team"] == "Tottenham Royals")
+                                    (all_players["Squad"] == "Tottenham Royals")
                                     & (all_players["Position"] == "RB")
-                                ]["Name"]
+                                ]["Player"]
                             ],
                         ),
                         html.H5("RB"),
@@ -170,9 +162,9 @@ def render_content(tab):
                             options=[
                                 {"label": player, "value": player}
                                 for player in all_players[
-                                    (all_players["Team"] == "Tottenham Royals")
+                                    (all_players["Squad"] == "Tottenham Royals")
                                     & (all_players["Position"] == "RB")
-                                ]["Name"]
+                                ]["Player"]
                             ],
                         ),
                         html.H5("WR"),
@@ -181,9 +173,9 @@ def render_content(tab):
                             options=[
                                 {"label": player, "value": player}
                                 for player in all_players[
-                                    (all_players["Team"] == "Tottenham Royals")
+                                    (all_players["Squad"] == "Tottenham Royals")
                                     & (all_players["Position"] == "WR")
-                                ]["Name"]
+                                ]["Player"]
                             ],
                         ),
                         html.H5("WR"),
@@ -192,9 +184,9 @@ def render_content(tab):
                             options=[
                                 {"label": player, "value": player}
                                 for player in all_players[
-                                    (all_players["Team"] == "Tottenham Royals")
+                                    (all_players["Squad"] == "Tottenham Royals")
                                     & (all_players["Position"] == "WR")
-                                ]["Name"]
+                                ]["Player"]
                             ],
                         ),
                         html.H5("WR"),
@@ -203,9 +195,9 @@ def render_content(tab):
                             options=[
                                 {"label": player, "value": player}
                                 for player in all_players[
-                                    (all_players["Team"] == "Tottenham Royals")
+                                    (all_players["Squad"] == "Tottenham Royals")
                                     & (all_players["Position"] == "WR")
-                                ]["Name"]
+                                ]["Player"]
                             ],
                         ),
                         html.H5("TE"),
@@ -214,9 +206,9 @@ def render_content(tab):
                             options=[
                                 {"label": player, "value": player}
                                 for player in all_players[
-                                    (all_players["Team"] == "Tottenham Royals")
+                                    (all_players["Squad"] == "Tottenham Royals")
                                     & (all_players["Position"] == "TE")
-                                ]["Name"]
+                                ]["Player"]
                             ],
                         ),
                         html.H5("Flex"),
@@ -225,13 +217,13 @@ def render_content(tab):
                             options=[
                                 {"label": player, "value": player}
                                 for player in all_players[
-                                    (all_players["Team"] == "Tottenham Royals")
+                                    (all_players["Squad"] == "Tottenham Royals")
                                     & (
                                         (all_players["Position"] == "RB")
                                         | (all_players["Position"] == "WR")
                                         | (all_players["Position"] == "TE")
                                     )
-                                ]["Name"]
+                                ]["Player"]
                             ],
                         ),
                         html.H5("K"),
@@ -240,9 +232,9 @@ def render_content(tab):
                             options=[
                                 {"label": player, "value": player}
                                 for player in all_players[
-                                    (all_players["Team"] == "Tottenham Royals")
+                                    (all_players["Squad"] == "Tottenham Royals")
                                     & (all_players["Position"] == "K")
-                                ]["Name"]
+                                ]["Player"]
                             ],
                         ),
                         html.H5("DST"),
@@ -251,9 +243,9 @@ def render_content(tab):
                             options=[
                                 {"label": player, "value": player}
                                 for player in all_players[
-                                    (all_players["Team"] == "Tottenham Royals")
+                                    (all_players["Squad"] == "Tottenham Royals")
                                     & (all_players["Position"] == "DST")
-                                ]["Name"]
+                                ]["Player"]
                             ],
                         ),
                     ],
@@ -268,9 +260,9 @@ def render_content(tab):
                             options=[
                                 {"label": player, "value": player}
                                 for player in all_players[
-                                    (all_players["Team"] == "Tottenham Royals")
+                                    (all_players["Squad"] == "Tottenham Royals")
                                     & (all_players["Position"] == "QB")
-                                ]["Name"]
+                                ]["Player"]
                             ],
                         ),
                         html.H5("RB"),
@@ -279,9 +271,9 @@ def render_content(tab):
                             options=[
                                 {"label": player, "value": player}
                                 for player in all_players[
-                                    (all_players["Team"] == "Tottenham Royals")
+                                    (all_players["Squad"] == "Tottenham Royals")
                                     & (all_players["Position"] == "RB")
-                                ]["Name"]
+                                ]["Player"]
                             ],
                         ),
                         html.H5("RB"),
@@ -290,9 +282,9 @@ def render_content(tab):
                             options=[
                                 {"label": player, "value": player}
                                 for player in all_players[
-                                    (all_players["Team"] == "Tottenham Royals")
+                                    (all_players["Squad"] == "Tottenham Royals")
                                     & (all_players["Position"] == "RB")
-                                ]["Name"]
+                                ]["Player"]
                             ],
                         ),
                         html.H5("WR"),
@@ -301,9 +293,9 @@ def render_content(tab):
                             options=[
                                 {"label": player, "value": player}
                                 for player in all_players[
-                                    (all_players["Team"] == "Tottenham Royals")
+                                    (all_players["Squad"] == "Tottenham Royals")
                                     & (all_players["Position"] == "WR")
-                                ]["Name"]
+                                ]["Player"]
                             ],
                         ),
                         html.H5("WR"),
@@ -312,9 +304,9 @@ def render_content(tab):
                             options=[
                                 {"label": player, "value": player}
                                 for player in all_players[
-                                    (all_players["Team"] == "Tottenham Royals")
+                                    (all_players["Squad"] == "Tottenham Royals")
                                     & (all_players["Position"] == "WR")
-                                ]["Name"]
+                                ]["Player"]
                             ],
                         ),
                         html.H5("WR"),
@@ -323,9 +315,9 @@ def render_content(tab):
                             options=[
                                 {"label": player, "value": player}
                                 for player in all_players[
-                                    (all_players["Team"] == "Tottenham Royals")
+                                    (all_players["Squad"] == "Tottenham Royals")
                                     & (all_players["Position"] == "WR")
-                                ]["Name"]
+                                ]["Player"]
                             ],
                         ),
                         html.H5("TE"),
@@ -334,9 +326,9 @@ def render_content(tab):
                             options=[
                                 {"label": player, "value": player}
                                 for player in all_players[
-                                    (all_players["Team"] == "Tottenham Royals")
+                                    (all_players["Squad"] == "Tottenham Royals")
                                     & (all_players["Position"] == "TE")
-                                ]["Name"]
+                                ]["Player"]
                             ],
                         ),
                         html.H5("Flex"),
@@ -345,13 +337,13 @@ def render_content(tab):
                             options=[
                                 {"label": player, "value": player}
                                 for player in all_players[
-                                    (all_players["Team"] == "Tottenham Royals")
+                                    (all_players["Squad"] == "Tottenham Royals")
                                     & (
                                         (all_players["Position"] == "RB")
                                         | (all_players["Position"] == "WR")
                                         | (all_players["Position"] == "TE")
                                     )
-                                ]["Name"]
+                                ]["Player"]
                             ],
                         ),
                         html.H5("K"),
@@ -360,9 +352,9 @@ def render_content(tab):
                             options=[
                                 {"label": player, "value": player}
                                 for player in all_players[
-                                    (all_players["Team"] == "Tottenham Royals")
+                                    (all_players["Squad"] == "Tottenham Royals")
                                     & (all_players["Position"] == "K")
-                                ]["Name"]
+                                ]["Player"]
                             ],
                         ),
                         html.H5("DST"),
@@ -371,9 +363,9 @@ def render_content(tab):
                             options=[
                                 {"label": player, "value": player}
                                 for player in all_players[
-                                    (all_players["Team"] == "Tottenham Royals")
+                                    (all_players["Squad"] == "Tottenham Royals")
                                     & (all_players["Position"] == "DST")
-                                ]["Name"]
+                                ]["Player"]
                             ],
                         ),
                     ],
