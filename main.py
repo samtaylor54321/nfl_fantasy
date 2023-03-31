@@ -11,7 +11,7 @@ from dash.dependencies import Input, Output
 external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 
 # Set environment variables
-# VALID_USERNAME_PASSWORD_PAIRS = {os.getenv("API_USER"): os.environ.get("API_PASSWORD")}
+VALID_USERNAME_PASSWORD_PAIRS = {os.getenv("API_USER"): os.environ.get("API_PASSWORD")}
 
 app = Dash(
     __name__,
@@ -19,7 +19,7 @@ app = Dash(
     suppress_callback_exceptions=True,
 )
 
-# auth = dash_auth.BasicAuth(app, VALID_USERNAME_PASSWORD_PAIRS)
+auth = dash_auth.BasicAuth(app, VALID_USERNAME_PASSWORD_PAIRS)
 
 # Instantiate scrapper
 scraper = NFLDataScrapper()
