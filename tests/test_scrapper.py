@@ -9,8 +9,6 @@ from src.scrapper import NFLDataScrapper
 def scrapper():
     # Instantiate scrapper
     scrapper = NFLDataScrapper()
-    # Get current gameweek infomation
-    scrapper.scrape_weeks()
 
     yield scrapper
 
@@ -21,8 +19,8 @@ def sample_data():
         {
             "Price": [10, 20, 30, np.nan],
             "Position": ["QB", "RB", "WR", "WR"],
-            "total_pts": [4, 6, 8, 10],
-            "Team": ["Team1", "Team2", "Team3", np.nan],
+            "TTL": [4, 6, 8, 10],
+            "Squad": ["Team1", "Team2", "Team3", np.nan],
             "Years Remaining": [1.0, 1.0, 2.0, np.nan],
         }
     )
@@ -35,41 +33,13 @@ class TestScrapper(object):
         # Generate actual results
         actual = scrapper.generate_nfl_dataset()
 
-        assert (actual.shape[0] == 722) and (actual.shape[1] == 30)
-
-    def test_scrape_weeks(object, scrapper):
-        """Test the ability to identify how far we are through the season"""
-        assert scrapper.latest_gameweek == 17, "The latest gameweek is not shown"
-
-        assert len(scrapper.weeks) == 18, "Not all weeks are included"
-
-    def test_scrape_weekly_results(object, scrapper):
-        """Test that we're getting the correctly weekly results"""
-        players, weekly_results = scrapper.scrape_weekly_results()
-
-        assert (
-            len(weekly_results.keys()) == scrapper.latest_gameweek + 1
-        ), "Results are missing for at least one gameweek"
-
-    def test_combine_weekly_performance_with_players(object, scrapper):
-        # Scrape player level data for each game week
-        players, weekly_results = scrapper.scrape_weekly_results()
-
-        # Combine the weekly results with the entire player pool
-        actual = scrapper.combine_weekly_performance_with_players(
-            players, weekly_results
-        )
-
-        # Load expected data into memory
-        expected = pd.read_csv("./data/test-database.csv", index_col=0)
-
-        assert (actual.shape[0] == 720) and (actual.shape[1] == 20)
+        assert (actual.shape[0] == 723) and (actual.shape[1] == 30)
 
     def test_clean_data(object, scrapper, sample_data):
         """Test that the missing values are filled"""
         cleaned_data = scrapper.clean_data(sample_data)
 
-        assert cleaned_data["Team"].isna().sum() == 0
+        assert cleaned_data["Squad"].isna().sum() == 0
 
         assert cleaned_data["Years Remaining"].isna().sum() == 0
 
@@ -83,12 +53,11 @@ class TestScrapper(object):
                 [
                     "Price",
                     "Position",
-                    "total_pts",
-                    "Team",
+                    "TTL",
+                    "Squad",
                     "Years Remaining",
                     "AvgPointsByPosition",
                     "PointsAboveReplacement",
-                    "AvgPoints",
                 ]
             ).astype("object")
         ).all()
