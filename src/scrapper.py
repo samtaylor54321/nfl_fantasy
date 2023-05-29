@@ -24,8 +24,9 @@ class NFLDataScrapper:
         data = [info.text for info in tbody[0].find_all("td")]
 
         player_database = pd.DataFrame(
-            np.array(data).reshape(int(len(data) / 23), 23),
+            np.array(data).reshape(int(len(data) / 24), 24),
             columns=[
+                "Rank",
                 "Player",
                 "Position",
                 "Team",
