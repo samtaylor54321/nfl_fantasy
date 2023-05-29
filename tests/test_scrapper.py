@@ -33,7 +33,7 @@ class TestScrapper(object):
         # Generate actual results
         actual = scrapper.generate_nfl_dataset()
 
-        assert (actual.shape[0] == 723) and (actual.shape[1] == 30)
+        assert (actual.shape[0] == 723) and (actual.shape[1] == 31)
 
     def test_clean_data(object, scrapper, sample_data):
         """Test that the missing values are filled"""
