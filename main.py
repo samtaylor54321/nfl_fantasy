@@ -13,11 +13,7 @@ external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 # Set environment variables
 VALID_USERNAME_PASSWORD_PAIRS = {os.getenv("API_USER"): os.environ.get("API_PASSWORD")}
 
-app = Dash(
-    __name__,
-    external_stylesheets=external_stylesheets,
-    suppress_callback_exceptions=True,
-)
+app = Dash(__name__, external_stylesheets=external_stylesheets)
 
 auth = dash_auth.BasicAuth(app, VALID_USERNAME_PASSWORD_PAIRS)
 
@@ -27,7 +23,7 @@ scraper = NFLDataScrapper()
 # Scrape player data
 all_players = scraper.generate_nfl_dataset()
 
-players_long = all_players.iloc[:, 0:21].melt(id_vars=["Player", "Position", "Team"])
+players_long = all_players.iloc[:, 1:21].melt(id_vars=["Player", "Position", "Team"])
 
 players_long["variable"] = players_long["variable"].astype(int)
 
@@ -420,14 +416,11 @@ def update_plot(
     dst_dropdown_alt,
     k_dropdown_alt,
 ):
-
     if dst_dropdown_alt:
-
         score_dist = []
         score_dist_alt = []
 
         for _ in range(10000):
-
             qb_score = np.random.exponential(
                 player_params.loc[qb_dropdown, "mean"],
             )
