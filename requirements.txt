@@ -15,5 +15,5 @@ pytest-cov==3.0.0
 pylint==2.13.5
 dash-auth==1.4.1
 certifi>=2022.12.7 # not directly required, pinned by Snyk to avoid a vulnerability
-flask==2.2.3 # not directly required, pinned by Snyk to avoid a vulnerability
+flask==2.2.5 # not directly required, pinned by Snyk to avoid a vulnerability
 setuptools==65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
