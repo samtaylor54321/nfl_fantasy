@@ -1,4 +1,4 @@
-name: Premier League Predictions
+name: NFL Fantasy
 on: [push]
 
 permissions:
