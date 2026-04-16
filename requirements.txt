@@ -10,7 +10,7 @@ statsmodels==0.14.6
 numpy==2.2.6
 scrapy>=2.14.2
 openpyxl==3.1.5
-pytest==8.3.5
+pytest==9.0.3
 pytest-cov==6.1.0
 pylint==3.3.4
 dash-auth==2.3.0
